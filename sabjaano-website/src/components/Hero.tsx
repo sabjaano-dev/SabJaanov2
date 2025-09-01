@@ -211,7 +211,6 @@ export default function Hero() {
           {/* Contact Info */}
           <div className="mt-10 text-sm text-white/80">
             <p>contact@sabjaano.com</p>
-            <p>+91-83035 72544 +91-82718 19966</p>
             <p>© {new Date().getFullYear()} SabJaano Ads LLP</p>
           </div>
         </footer>
