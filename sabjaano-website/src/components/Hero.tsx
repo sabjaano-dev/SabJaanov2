@@ -576,21 +576,24 @@ export default function StripeHero() {
     Choose the best Plan
   </Link>
 
-  <Link
-    href="/generate-ad"
-    className="bg-purple-600 text-white rounded-full px-6 py-3 text-sm hover:bg-purple-700 transition"
-  >
-    Step 2: Generate Ad
-  </Link>
+<Link
+  href="/generate-ad"
+  className="bg-purple-600 text-white rounded-full px-6 py-3 text-sm hover:bg-purple-700 transition"
+>
+  Step 2: Generate Ad
+</Link>
 
 </div>
-          </div>
-          <div className="absolute top-0 right-0 h-full flex items-center pointer-events-none">
-            <img
-              src="/hero-image.png"
-              alt="Hero"
-              className="h-full object-contain shadow-2.5xl drop-shadow-xl"
-            />
+</div>
+
+<div className="absolute top-0 right-0 h-full flex items-center pointer-events-none">
+  <img
+    src="/hero-image.png"
+    alt="Hero"
+    className="h-full object-contain shadow-2.5xl drop-shadow-xl"
+  />
+</div>
+
           </div>
 
           
