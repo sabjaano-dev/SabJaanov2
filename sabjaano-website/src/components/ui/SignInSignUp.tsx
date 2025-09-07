@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Mail, Lock, User } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from 'next/link';
-import Footer from "@/components/ui/Footer";
+// MODIFICATION: Removed the unused Footer import
+// import Footer from "@/components/ui/Footer";
 
 // --- Google Icon SVG Component ---
 const GoogleIcon = () => (

@@ -756,6 +756,7 @@ export default function StripeHero() {
       <ContactUs/>
       <Footer />
     </div>
+    //Test 
   );
 }
 
