@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+// import PageTransition from "./providers/PageTransition";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +26,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <meta name="description" content="Indoor Advertising that Converts – Smart, Targeted, and Cost-Effective by SabJaano." />
+        <meta
+          name="description"
+          content="Indoor Advertising that Converts – Smart, Targeted, and Cost-Effective by SabJaano."
+        />
         <link rel="icon" href="/favicon.ico" />
         <title>SabJaano Ads</title>
       </head>
