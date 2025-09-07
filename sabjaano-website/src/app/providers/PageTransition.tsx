@@ -1,23 +1,15 @@
-// "use client";
+// src/app/precision-targeting/page.tsx
+import React from "react";
 
-// import { AnimatePresence, motion } from "framer-motion";
-// import { usePathname } from "next/navigation";
-// import { ReactNode } from "react";
+export const metadata = {
+  title: "Precision Targeting",
+};
 
-// export default function PageTransition({ children }: { children: ReactNode }) {
-//   const pathname = usePathname();
-
-//   return (
-//     <AnimatePresence mode="wait">
-//       <motion.div
-//         key={pathname} // re-renders on route change
-//         initial={{ opacity: 0, y: 20 }}
-//         animate={{ opacity: 1, y: 0 }}
-//         exit={{ opacity: 0, y: -20 }}
-//         transition={{ duration: 0.5, ease: "easeInOut" }}
-//       >
-//         {children}
-//       </motion.div>
-//     </AnimatePresence>
-//   );
-// }
+export default function Page() {
+  return (
+    <main className="p-6">
+      <h1 className="text-2xl font-bold">Precision Targeting</h1>
+      {/* your content */}
+    </main>
+  );
+}
