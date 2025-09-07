@@ -21,7 +21,9 @@ export async function POST(request: NextRequest) {
     const user = await User.create({ email, password: hash });
 
     return NextResponse.json({ id: user._id, email: user.email }, { status: 201 });
-  } catch (err) {
+  } 
+  
+  catch (err) {
     console.error('Signup error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
