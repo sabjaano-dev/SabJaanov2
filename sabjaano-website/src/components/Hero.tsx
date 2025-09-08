@@ -11,6 +11,7 @@ import PlanCard from "@/components/ui/PlanCard";
 import Footer from "./ui/Footer";
 import USPPage from "./ui/UspPage";
 import ContactUs from "./ui/ContactUs";
+import SignInSignUp from "./ui/SignInSignUp";
 
 // --- VIDEO SHOWCASE COMPONENT ---
 function VideoShowcase() {
@@ -319,17 +320,9 @@ function AnalyticalDashboard() {
 export default function StripeHero() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [modalType, setModalType] = useState<"signin" | "signup" | null>(null);
-
-  const [siEmail, setSiEmail] = useState("");
-  const [siPassword, setSiPassword] = useState("");
-  const [siError, setSiError] = useState<string | null>(null);
-  const [siLoading, setSiLoading] = useState(false);
-
-  const [suEmail, setSuEmail] = useState("");
-  const [suPassword, setSuPassword] = useState("");
-  const [suError, setSuError] = useState<string | null>(null);
-  const [suLoading, setSuLoading] = useState(false);
+  const [modalType, setModalType] = useState<"signin" | "signup" | null>(
+    null
+  );
 
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
@@ -348,63 +341,18 @@ export default function StripeHero() {
 
   const openSignIn = () => {
     setModalType("signin");
-    setSiError(null);
   };
-  const openSignUp = () => {
-    setModalType("signup");
-    setSuError(null);
-  };
+
   const closeModal = () => {
     setModalType(null);
-    setSiError(null);
-    setSuError(null);
   };
 
-  const handleSiSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSiLoading(true);
-    setSiError(null);
-    try {
-      const res = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: siEmail, password: siPassword }),
-      });
-      if (res.ok) {
-        setIsAuthenticated(true);
-        closeModal();
-        return;
-      }
-      const body = await res.json().catch(() => ({}));
-      setSiError(body.error || `Login failed (${res.status})`);
-    } catch {
-      setSiError("Network error");
-    } finally {
-      setSiLoading(false);
-    }
+  const handleAuthSuccess = () => {
+    setIsAuthenticated(true);
   };
-
-  const handleSuSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSuLoading(true);
-    setSuError(null);
-    try {
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: suEmail, password: suPassword }),
-      });
-      if (res.ok) {
-        setModalType("signin");
-        return;
-      }
-      const body = await res.json().catch(() => ({}));
-      setSuError(body.error || `Signup failed (${res.status})`);
-    } catch {
-      setSuError("Network error");
-    } finally {
-      setSuLoading(false);
-    }
+  
+  const switchAuthModal = (type: "signin" | "signup") => {
+    setModalType(type);
   };
 
   const navItems = [
@@ -536,9 +484,9 @@ export default function StripeHero() {
               </button>
             )}
 
-            <button className="bg-white text-blue-600 hover:bg-gray-100 rounded-full px-5 py-1.5 text-sm font-semibold flex items-center gap-2">
-              Contact sales <ChevronDown className="w-4 h-4" />
-            </button>
+        <Link href="/account" className="bg-white text-blue-600 hover:bg-gray-100 rounded-full px-5 py-1.5 text-sm font-semibold flex items-center gap-2">
+          My Account
+        </Link>
             <Search className="h-4 w-4" />
             <ShoppingBag className="h-5 w-5" />
             <Menu className="h-5 w-5 md:hidden" />
@@ -625,138 +573,17 @@ export default function StripeHero() {
       <AnalyticalDashboard />
       <USPPage />
 
-
-
       {modalType && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-          onClick={closeModal}
-        >
-          <div
-            className="relative bg-white rounded-xl shadow-xl w-full max-w-md p-6"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-            >
-              ×
-            </button>
-            {modalType === "signin" ? (
-              <>
-                <h2 className="text-2xl font-bold text-center mb-4">Sign In</h2>
-                <p className="text-center text-gray-500 mb-6">with</p>
-                <div className="flex justify-center gap-4 mb-6">
-                  <button className="bg-blue-600 text-white p-3 rounded-full hover:opacity-90">
-                    <Menu size={20} />
-                  </button>
-                  <button className="bg-red-600 text-white p-3 rounded-full hover:opacity-90">
-                    <ChevronDown size={20} />
-                  </button>
-                </div>
-                {siError && (
-                  <div className="mb-4 text-red-600 bg-red-100 p-2 rounded">
-                    {siError}
-                  </div>
-                )}
-                <form onSubmit={handleSiSubmit} className="space-y-4">
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    required
-                    value={siEmail}
-                    onChange={(e) => setSiEmail(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    required
-                    value={siPassword}
-                    onChange={(e) => setSiPassword(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                  />
-                  <button
-                    type="submit"
-                    disabled={siLoading}
-                    className="w-full bg-pink-600 text-white py-2 rounded hover:bg-pink-700 transition disabled:opacity-50"
-                  >
-                    {siLoading ? "Signing in…" : "Sign In"}
-                  </button>
-                </form>
-                <div className="mt-6 flex justify-between text-sm text-gray-600">
-                  <button onClick={openSignUp} className="hover:underline">
-                    New Here? Sign Up
-                  </button>
-                  <button
-                    onClick={() => {
-                      /* forgot… */
-                    }}
-                    className="hover:underline"
-                  >
-                    Forgot Password?
-                  </button>
-                </div>
-              </>
-            ) : (
-              <>
-                <h2 className="text-2xl font-bold text-center mb-4">
-                  Register
-                </h2>
-                <p className="text-center text-gray-500 mb-6">with</p>
-                <div className="flex justify-center gap-4 mb-6">
-                  <button className="bg-blue-600 text-white p-3 rounded-full hover:opacity-90">
-                    <Menu size={20} />
-                  </button>
-                  <button className="bg-red-600 text-white p-3 rounded-full hover:opacity-90">
-                    <ChevronDown size={20} />
-                  </button>
-                </div>
-                {suError && (
-                  <div className="mb-4 text-red-600 bg-red-100 p-2 rounded">
-                    {suError}
-                  </div>
-                )}
-                <form onSubmit={handleSuSubmit} className="space-y-4">
-                  <input
-                    type="email"
-                    placeholder="Email"
-                    required
-                    value={suEmail}
-                    onChange={(e) => setSuEmail(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                  />
-                  <input
-                    type="password"
-                    placeholder="Password"
-                    required
-                    value={suPassword}
-                    onChange={(e) => setSuPassword(e.target.value)}
-                    className="w-full border rounded px-3 py-2"
-                  />
-                  <button
-                    type="submit"
-                    disabled={suLoading}
-                    className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-700 transition disabled:opacity-50"
-                  >
-                    {suLoading ? "Registering…" : "Register"}
-                  </button>
-                </form>
-                <div className="mt-6 text-center text-sm">
-                  Already have an account?{" "}
-                  <button onClick={openSignIn} className="hover:underline">
-                    Sign In
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </div>
-      )}//
+        <SignInSignUp
+          modalType={modalType}
+          closeModal={closeModal}
+          onAuthSuccess={handleAuthSuccess}
+          switchModal={switchAuthModal}
+        />
+      )}
+      
       <ContactUs/>
       <Footer />
     </div>
-    //Test 
   );
 }
-
