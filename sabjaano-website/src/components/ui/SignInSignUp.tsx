@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Mail, Lock, User } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Link from 'next/link';
-// MODIFICATION: Removed the unused Footer import
-// import Footer from "@/components/ui/Footer";
+import { X, Mail, Lock, User, Phone, Image } from "lucide-react";
+
+// --- Props Interface ---
+// Defines the properties the component will accept from its parent (the hero component)
+interface SignInSignUpProps {
+  modalType: "signin" | "signup";
+  closeModal: () => void;
+  onAuthSuccess: () => void;
+  switchModal: (type: "signin" | "signup") => void;
+}
 
 // --- Google Icon SVG Component ---
 const GoogleIcon = () => (
@@ -18,11 +23,8 @@ const GoogleIcon = () => (
     </svg>
 );
 
-
-export default function AuthPage() {
-  const [formType, setFormType] = useState<"signin" | "signup">("signin");
-  const router = useRouter();
-
+// --- Main Component ---
+const SignInSignUp: React.FC<SignInSignUpProps> = ({ modalType, closeModal, onAuthSuccess, switchModal }) => {
   // Sign-In form state
   const [siEmail, setSiEmail] = useState("");
   const [siPassword, setSiPassword] = useState("");
@@ -34,6 +36,9 @@ export default function AuthPage() {
   const [suLastName, setSuLastName] = useState("");
   const [suEmail, setSuEmail] = useState("");
   const [suPassword, setSuPassword] = useState("");
+  const [suConfirmPassword, setSuConfirmPassword] = useState("");
+  const [suPhoneNumber, setSuPhoneNumber] = useState("");
+  const [suAvatarUrl, setSuAvatarUrl] = useState("");
   const [suError, setSuError] = useState<string | null>(null);
   const [suLoading, setSuLoading] = useState(false);
 
@@ -48,7 +53,8 @@ export default function AuthPage() {
         body: JSON.stringify({ email: siEmail, password: siPassword }),
       });
       if (res.ok) {
-        router.push("/"); // Redirect to homepage on success
+        onAuthSuccess(); // Notify parent of success
+        closeModal();    // Close the modal
         return;
       }
       const body = await res.json().catch(() => ({}));
@@ -62,6 +68,10 @@ export default function AuthPage() {
 
   const handleSuSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (suPassword !== suConfirmPassword) {
+      setSuError("Passwords do not match.");
+      return;
+    }
     setSuLoading(true);
     setSuError(null);
     try {
@@ -72,11 +82,13 @@ export default function AuthPage() {
             firstname: suFirstName, 
             lastname: suLastName, 
             email: suEmail, 
-            password: suPassword 
+            password: suPassword,
+            phone: suPhoneNumber,
+            avatar: suAvatarUrl,
         }),
       });
       if (res.ok) {
-        setFormType("signin"); // Switch to sign-in on success
+        switchModal("signin"); // Switch to sign-in on success
         return;
       }
       const body = await res.json().catch(() => ({}));
@@ -89,34 +101,21 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white flex items-center justify-center p-4 relative overflow-hidden">
-        <div className="absolute inset-0 z-0 opacity-30">
-             <motion.div
-                className="absolute top-0 left-0 w-full h-full"
-                style={{
-                backgroundImage:
-                    "linear-gradient(-45deg,#00bcd4,rgb(236,128,255),#00c853,#ffd600,#1e90ff,#ff4081)",
-                backgroundSize: "600% 600%",
-                }}
-                animate={{
-                backgroundPosition: [ "0% 50%", "50% 50%", "100% 50%", "50% 50%", "0% 50%", ],
-                }}
-                transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            />
-        </div>
-        
+    <div className="fixed inset-0 z-50 bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4" onClick={closeModal}>
         <motion.div
             initial={{ scale: 0.9, opacity: 0, y: 20 }}
             animate={{ scale: 1, opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative bg-gray-800/50 backdrop-blur-lg rounded-2xl shadow-2xl w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 overflow-hidden border border-gray-700"
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ duration: 0.3 }}
+            className="relative bg-gray-800/80 rounded-2xl shadow-2xl w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 overflow-hidden border border-gray-700"
+            onClick={(e) => e.stopPropagation()} // Prevents modal from closing when clicking inside
         >
             <div className="hidden md:flex flex-col justify-center p-12 bg-gradient-to-br from-purple-600/50 to-blue-600/50">
                 <h2 className="text-3xl font-bold mb-4">
-                    {formType === 'signin' ? "Welcome Back!" : "Join Us Today!"}
+                    {modalType === 'signin' ? "Welcome Back!" : "Join Us Today!"}
                 </h2>
                 <p className="text-purple-200">
-                    {formType === 'signin' 
+                    {modalType === 'signin' 
                         ? "Sign in to access your dashboard and manage your campaigns."
                         : "Create an account to start turning your ideas into profit."
                     }
@@ -124,24 +123,24 @@ export default function AuthPage() {
             </div>
 
             <div className="p-8 md:p-12">
-                <Link href="/" className="absolute top-4 right-4 text-gray-400 hover:text-white transition-transform hover:scale-125">
+                <button onClick={closeModal} className="absolute top-4 right-4 text-gray-400 hover:text-white transition-transform hover:scale-125">
                   <X size={24} />
-                </Link>
+                </button>
                 
                 <div className="flex mb-6 border-b border-gray-700">
-                    <button onClick={() => setFormType('signin')} className={`py-2 px-4 font-semibold ${formType === 'signin' ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:text-white'}`}>Sign In</button>
-                    <button onClick={() => setFormType('signup')} className={`py-2 px-4 font-semibold ${formType === 'signup' ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:text-white'}`}>Sign Up</button>
+                    <button onClick={() => switchModal('signin')} className={`py-2 px-4 font-semibold ${modalType === 'signin' ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:text-white'}`}>Sign In</button>
+                    <button onClick={() => switchModal('signup')} className={`py-2 px-4 font-semibold ${modalType === 'signup' ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-400 hover:text-white'}`}>Sign Up</button>
                 </div>
                 
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={formType}
+                    key={modalType}
                     initial={{ opacity: 0, x: 20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                  {formType === "signin" ? (
+                  {modalType === "signin" ? (
                     <div>
                       <h3 className="text-2xl font-bold text-white mb-4">Login to Your Account</h3>
                        <div className="flex justify-center gap-4 mb-6">
@@ -189,6 +188,18 @@ export default function AuthPage() {
                                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
                                 <input type="password" placeholder="Password" required value={suPassword} onChange={(e) => setSuPassword(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-white focus:ring-cyan-500 focus:border-cyan-500" />
                             </div>
+                            <div className="relative">
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
+                                <input type="password" placeholder="Confirm Password" required value={suConfirmPassword} onChange={(e) => setSuConfirmPassword(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-white focus:ring-cyan-500 focus:border-cyan-500" />
+                            </div>
+                             <div className="relative">
+                                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
+                                <input type="tel" placeholder="Phone Number (Optional)" value={suPhoneNumber} onChange={(e) => setSuPhoneNumber(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-white focus:ring-cyan-500 focus:border-cyan-500" />
+                            </div>
+                            <div className="relative">
+                                <Image className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20}/>
+                                <input type="text" placeholder="Avatar URL (Optional)" value={suAvatarUrl} onChange={(e) => setSuAvatarUrl(e.target.value)} className="w-full bg-gray-900 border border-gray-700 rounded-lg pl-10 pr-4 py-3 text-white focus:ring-cyan-500 focus:border-cyan-500" />
+                            </div>
                             <button type="submit" disabled={suLoading} className="w-full bg-cyan-500 text-white font-bold py-3 rounded-lg hover:bg-cyan-600 transition disabled:opacity-50">{suLoading ? "Creating Account…" : "Create Account"}</button>
                         </form>
                     </div>
@@ -200,3 +211,6 @@ export default function AuthPage() {
     </div>
   );
 }
+
+export default SignInSignUp;
+
