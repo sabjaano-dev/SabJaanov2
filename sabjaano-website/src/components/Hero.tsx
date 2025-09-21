@@ -2,12 +2,25 @@
 
 import { useState, useEffect, useRef } from "react";
 // MODIFICATION: Added useInView for scroll animations
-import { Menu, ShoppingBag, Search, ChevronDown, Play, Pause, Volume2, VolumeX, MapPin, BarChart, Video, Dot } from "lucide-react";
+import {
+  Menu,
+  ShoppingBag,
+  Search,
+  ChevronDown,
+  Play,
+  Pause,
+  Volume2,
+  VolumeX,
+  MapPin,
+  BarChart,
+  Video,
+  Dot,
+} from "lucide-react";
 import { motion, useScroll, useTransform, useInView } from "framer-motion";
+
 import { useRouter } from "next/navigation";
-import { HowItWorks } from '@/components/HowItWorks';
-import Link from 'next/link'
-import PlanCard from "@/components/ui/PlanCard";
+import { HowItWorks } from "@/components/HowItWorks";
+import Link from "next/link";
 import Footer from "./ui/Footer";
 import USPPage from "./ui/UspPage";
 import ContactUs from "./ui/ContactUs";
@@ -28,7 +41,10 @@ function VideoShowcase() {
     if (isNaN(timeInSeconds)) return "00:00";
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = Math.floor(timeInSeconds % 60);
-    return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(
+      2,
+      "0"
+    )}`;
   };
 
   useEffect(() => {
@@ -46,14 +62,14 @@ function VideoShowcase() {
       setDuration(formatTime(video.duration));
     };
 
-    video.addEventListener('timeupdate', updateProgress);
-    video.addEventListener('loadedmetadata', setVideoDuration);
-    video.addEventListener('ended', () => setIsPlaying(false));
+    video.addEventListener("timeupdate", updateProgress);
+    video.addEventListener("loadedmetadata", setVideoDuration);
+    video.addEventListener("ended", () => setIsPlaying(false));
 
     return () => {
-      video.removeEventListener('timeupdate', updateProgress);
-      video.removeEventListener('loadedmetadata', setVideoDuration);
-      video.removeEventListener('ended', () => setIsPlaying(false));
+      video.removeEventListener("timeupdate", updateProgress);
+      video.removeEventListener("loadedmetadata", setVideoDuration);
+      video.removeEventListener("ended", () => setIsPlaying(false));
     };
   }, [isSeeking]);
 
@@ -78,13 +94,13 @@ function VideoShowcase() {
     };
 
     if (isSeeking) {
-      window.addEventListener('mousemove', handleMouseMove);
-      window.addEventListener('mouseup', handleMouseUp);
+      window.addEventListener("mousemove", handleMouseMove);
+      window.addEventListener("mouseup", handleMouseUp);
     }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
     };
   }, [isSeeking, videoRef, seekBarRef]);
 
@@ -108,7 +124,7 @@ function VideoShowcase() {
       setIsMuted(video.muted);
     }
   };
-  
+
   const handleSeekMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
     const video = videoRef.current;
     const seekBar = seekBarRef.current;
@@ -135,15 +151,15 @@ function VideoShowcase() {
             Watch how easy it is to generate professional ads in seconds.
           </p>
         </div>
-        
+
         <div className="relative rounded-2xl p-1 bg-gradient-to-br from-blue-500 via-purple-500 to-cyan-400 shadow-2xl shadow-purple-500/50">
           <div className="relative w-full aspect-video bg-gray-900 rounded-xl overflow-hidden group">
-            <video 
+            <video
               ref={videoRef}
               className="w-full h-full object-cover rounded-lg"
-              src="/vid.mp4" 
-              autoPlay 
-              muted 
+              src="/vid.mp4"
+              autoPlay
+              muted
               playsInline
               onClick={togglePlayPause}
             >
@@ -151,15 +167,24 @@ function VideoShowcase() {
             </video>
 
             <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-              <div 
-                ref={seekBarRef} 
-                className="relative h-1.5 bg-white/20 rounded-full cursor-pointer" 
+              <div
+                ref={seekBarRef}
+                className="relative h-1.5 bg-white/20 rounded-full cursor-pointer"
                 onMouseDown={handleSeekMouseDown}
               >
-                <div className="absolute h-full bg-cyan-400 rounded-full" style={{ width: `${progress}%` }}></div>
-                <div className="absolute h-4 w-4 -mt-1.5 bg-white rounded-full shadow" style={{ left: `${progress}%`, transform: 'translateX(-50%)' }}></div>
+                <div
+                  className="absolute h-full bg-cyan-400 rounded-full"
+                  style={{ width: `${progress}%` }}
+                ></div>
+                <div
+                  className="absolute h-4 w-4 -mt-1.5 bg-white rounded-full shadow"
+                  style={{
+                    left: `${progress}%`,
+                    transform: "translateX(-50%)",
+                  }}
+                ></div>
               </div>
-              
+
               <div className="flex items-center justify-between mt-2">
                 <div className="flex items-center gap-4">
                   <button onClick={togglePlayPause} className="text-white">
@@ -183,7 +208,6 @@ function VideoShowcase() {
 
 // --- ANALYTICAL DASHBOARD COMPONENT ---
 function AnalyticalDashboard() {
-  // MODIFICATION: Added refs and hooks for parallax and scroll animations
   const dashboardRef = useRef(null);
   const isInView = useInView(dashboardRef, { once: true, amount: 0.2 });
   const { scrollYProgress } = useScroll({
@@ -191,12 +215,10 @@ function AnalyticalDashboard() {
     offset: ["start end", "end start"],
   });
 
-  // Parallax transformations for each card
   const y1 = useTransform(scrollYProgress, [0, 1], [-50, 50]);
   const y2 = useTransform(scrollYProgress, [0, 1], [50, -50]);
   const y3 = useTransform(scrollYProgress, [0, 1], [-20, 20]);
-  
-  // Staggered animation variants for cards
+
   const cardVariants = {
     hidden: { opacity: 0, y: 50 },
     visible: (i: number) => ({
@@ -211,8 +233,10 @@ function AnalyticalDashboard() {
   };
 
   return (
-    // MODIFICATION: Added ref and overflow-hidden for animations
-    <div ref={dashboardRef} className="relative min-h-screen bg-gray-900 z-10 py-20 px-6 flex flex-col items-center justify-center overflow-hidden">
+    <div
+      ref={dashboardRef}
+      className="relative min-h-screen bg-gray-900 z-10 py-20 px-6 flex flex-col items-center justify-center overflow-hidden"
+    >
       <div className="w-full max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h2 className="text-4xl lg:text-5xl font-bold text-white tracking-tight">
@@ -225,7 +249,7 @@ function AnalyticalDashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Card 1: Live Camera Monitoring */}
-          <motion.div 
+          <motion.div
             style={{ y: y1 }}
             variants={cardVariants}
             initial="hidden"
@@ -235,17 +259,25 @@ function AnalyticalDashboard() {
             <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700">
               <div className="flex items-center gap-4 mb-4">
                 <Video className="text-cyan-400" size={28} />
-                <h3 className="text-xl font-semibold text-white">24/7 Live Monitoring</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  24/7 Live Monitoring
+                </h3>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
-                  <img src="https://placehold.co/600x400/000000/FFF?text=CAM_01" className="w-full h-full object-cover" />
+                  <img
+                    src="https://placehold.co/600x400/000000/FFF?text=CAM_01"
+                    className="w-full h-full object-cover"
+                  />
                   <div className="absolute top-2 left-2 flex items-center gap-2 text-xs bg-red-600 text-white px-2 py-0.5 rounded-md">
                     <Dot /> LIVE
                   </div>
                 </div>
                 <div className="relative aspect-video bg-gray-900 rounded-lg overflow-hidden">
-                  <img src="https://placehold.co/600x400/000000/FFF?text=CAM_02" className="w-full h-full object-cover" />
+                  <img
+                    src="https://placehold.co/600x400/000000/FFF?text=CAM_02"
+                    className="w-full h-full object-cover"
+                  />
                   <div className="absolute top-2 left-2 flex items-center gap-2 text-xs bg-red-600 text-white px-2 py-0.5 rounded-md">
                     <Dot /> LIVE
                   </div>
@@ -255,7 +287,7 @@ function AnalyticalDashboard() {
           </motion.div>
 
           {/* Card 2: Clicks & Active Screens */}
-          <motion.div 
+          <motion.div
             style={{ y: y2 }}
             variants={cardVariants}
             initial="hidden"
@@ -265,7 +297,9 @@ function AnalyticalDashboard() {
             <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700">
               <div className="flex items-center gap-4 mb-4">
                 <BarChart className="text-cyan-400" size={28} />
-                <h3 className="text-xl font-semibold text-white">Performance Metrics</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  Performance Metrics
+                </h3>
               </div>
               <div className="grid grid-cols-2 gap-6">
                 <div>
@@ -278,16 +312,26 @@ function AnalyticalDashboard() {
                 </div>
               </div>
               <div className="mt-6">
-                <svg width="100%" height="100" viewBox="0 0 300 100" preserveAspectRatio="none">
-                  <polyline fill="none" stroke="#06b6d4" strokeWidth="2" points="0,50 50,30 100,60 150,40 200,70 250,50 300,80" />
+                <svg
+                  width="100%"
+                  height="100"
+                  viewBox="0 0 300 100"
+                  preserveAspectRatio="none"
+                >
+                  <polyline
+                    fill="none"
+                    stroke="#06b6d4"
+                    strokeWidth="2"
+                    points="0,50 50,30 100,60 150,40 200,70 250,50 300,80"
+                  />
                 </svg>
               </div>
             </div>
           </motion.div>
 
           {/* Card 3: Geographical Region */}
-          <motion.div 
-            className="lg:col-span-2" 
+          <motion.div
+            className="lg:col-span-2"
             style={{ y: y3 }}
             variants={cardVariants}
             initial="hidden"
@@ -295,18 +339,51 @@ function AnalyticalDashboard() {
             custom={2}
           >
             <div className="bg-gray-800/50 rounded-2xl p-6 border border-gray-700">
-               <div className="flex items-center gap-4 mb-4">
+              <div className="flex items-center gap-4 mb-4">
                 <MapPin className="text-cyan-400" size={28} />
-                <h3 className="text-xl font-semibold text-white">Geographical Customization</h3>
+                <h3 className="text-xl font-semibold text-white">
+                  Geographical Customization
+                </h3>
               </div>
               <div className="relative w-full h-64 bg-gray-900 rounded-lg flex items-center justify-center">
-                <svg className="w-full h-full p-4 text-gray-700" viewBox="0 0 1000 500">
-                  <path d="M500 0L490 20L480 10L470 30L460 20L450 40L440 30L430 50L420 40L410 60L400 50L390 70L380 60L370 80L360 70L350 90L340 80L330 100L320 90L310 110L300 100L290 120L280 110L270 130L260 120L250 140L240 130L230 150L220 140L210 160L200 150L190 170L180 160L170 180L160 170L150 190L140 180L130 200L120 190L110 210L100 200L90 220L80 210L70 230L60 220L50 240L40 230L30 250L20 240L10 260L0 250 M500 500L510 480L520 490L530 470L540 480L550 460L560 470L570 450L580 460L590 440L600 450L610 430L620 440L630 420L640 430L650 410L660 420L670 400L680 410L690 390L700 400L710 380L720 390L730 370L740 380L750 360L760 370L770 350L780 360L790 340L800 350L810 330L820 340L830 320L840 330L850 310L860 320L870 300L880 310L890 290L900 300L910 280L920 290L930 270L940 280L950 260L960 270L970 250L980 260L990 240L1000 250" fill="currentColor"/>
-                  <circle cx="250" cy="150" r="10" className="text-cyan-400 fill-current" />
-                  <circle cx="550" cy="200" r="15" className="text-purple-500 fill-current" />
-                  <circle cx="700" cy="350" r="8" className="text-cyan-400 fill-current" />
-                  <circle cx="450" cy="300" r="12" className="text-purple-500 fill-current" />
-                   <circle cx="800" cy="120" r="10" className="text-cyan-400 fill-current" />
+                <svg
+                  className="w-full h-full p-4 text-gray-700"
+                  viewBox="0 0 1000 500"
+                >
+                  <path
+                    d="M500 0L490 20L480 10L470 30L460 20L450 40L440 30L430 50L420 40L410 60L400 50L390 70L380 60L370 80L360 70L350 90L340 80L330 100L320 90L310 110L300 100L290 120L280 110L270 130L260 120L250 140L240 130L230 150L220 140L210 160L200 150L190 170L180 160L170 180L160 170L150 190L140 180L130 200L120 190L110 210L100 200L90 220L80 210L70 230L60 220L50 240L40 230L30 250L20 240L10 260L0 250 M500 500L510 480L520 490L530 470L540 480L550 460L560 470L570 450L580 460L590 440L600 450L610 430L620 440L630 420L640 430L650 410L660 420L670 400L680 410L690 390L700 400L710 380L720 390L730 370L740 380L750 360L760 370L770 350L780 360L790 340L800 350L810 330L820 340L830 320L840 330L850 310L860 320L870 300L880 310L890 290L900 300L910 280L920 290L930 270L940 280L950 260L960 270L970 250L980 260L990 240L1000 250"
+                    fill="currentColor"
+                  />
+                  <circle
+                    cx="250"
+                    cy="150"
+                    r="10"
+                    className="text-cyan-400 fill-current"
+                  />
+                  <circle
+                    cx="550"
+                    cy="200"
+                    r="15"
+                    className="text-purple-500 fill-current"
+                  />
+                  <circle
+                    cx="700"
+                    cy="350"
+                    r="8"
+                    className="text-cyan-400 fill-current"
+                  />
+                  <circle
+                    cx="450"
+                    cy="300"
+                    r="12"
+                    className="text-purple-500 fill-current"
+                  />
+                  <circle
+                    cx="800"
+                    cy="120"
+                    r="10"
+                    className="text-cyan-400 fill-current"
+                  />
                 </svg>
               </div>
             </div>
@@ -320,23 +397,35 @@ function AnalyticalDashboard() {
 export default function StripeHero() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [modalType, setModalType] = useState<"signin" | "signup" | null>(
-    null
-  );
+  const [modalType, setModalType] = useState<"signin" | "signup" | null>(null);
 
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const router = useRouter();
 
+  const isAuthChecked = useRef(false);
+
   useEffect(() => {
-    fetch("/api/auth/me")
-      .then((res) => setIsAuthenticated(res.ok))
-      .catch(() => setIsAuthenticated(false));
+    if (!isAuthChecked.current && typeof window !== "undefined") {
+      const checkAuthStatus = async () => {
+        try {
+          const res = await fetch("/api/auth/status");
+          const data = await res.json();
+          setIsAuthenticated(data.authenticated);
+        } catch (error) {
+          setIsAuthenticated(false);
+        } finally {
+          isAuthChecked.current = true;
+        }
+      };
+      checkAuthStatus();
+    }
   }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     setIsAuthenticated(false);
-    router.push("/");
+    router.refresh();
   };
 
   const openSignIn = () => {
@@ -349,8 +438,9 @@ export default function StripeHero() {
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
+    router.refresh();
   };
-  
+
   const switchAuthModal = (type: "signin" | "signup") => {
     setModalType(type);
   };
@@ -484,9 +574,12 @@ export default function StripeHero() {
               </button>
             )}
 
-        <Link href="/account" className="bg-white text-blue-600 hover:bg-gray-100 rounded-full px-5 py-1.5 text-sm font-semibold flex items-center gap-2">
-          My Account
-        </Link>
+            <Link
+              href="/account"
+              className="bg-white text-blue-600 hover:bg-gray-100 rounded-full px-5 py-1.5 text-sm font-semibold flex items-center gap-2"
+            >
+              My Account
+            </Link>
             <Search className="h-4 w-4" />
             <ShoppingBag className="h-5 w-5" />
             <Menu className="h-5 w-5 md:hidden" />
@@ -509,29 +602,27 @@ export default function StripeHero() {
               <br />
               📍 900+ high-footfall locations activated
             </p>
-<div className="mt-6 flex gap-4">
-
+            <div className="mt-6 flex gap-4">
               <Link href="/request-invite">
                 <button className="bg-[#0f172a] text-white rounded-full px-6 py-3 text-sm hover:bg-black">
                   Request an invite
                 </button>
               </Link>
 
-  <Link
-    href="/choose-plan"
-    className="bg-blue-600 text-white rounded-full px-6 py-3 text-sm hover:bg-blue-700 transition"
-  >
-    Choose the best Plan
-  </Link>
+              <Link
+                href="/choose-plan"
+                className="bg-blue-600 text-white rounded-full px-6 py-3 text-sm hover:bg-blue-700 transition"
+              >
+                Choose the best Plan
+              </Link>
 
-  <Link
-    href="/generate-ad"
-    className="bg-purple-600 text-white rounded-full px-6 py-3 text-sm hover:bg-purple-700 transition"
-  >
-    Step 2: Generate Ad
-  </Link>
-
-</div>
+              <Link
+                href="/generate-ad"
+                className="bg-purple-600 text-white rounded-full px-6 py-3 text-sm hover:bg-purple-700 transition"
+              >
+                Step 2: Generate Ad
+              </Link>
+            </div>
           </div>
           <div className="absolute top-0 right-0 h-full flex items-center pointer-events-none">
             <img
@@ -540,36 +631,34 @@ export default function StripeHero() {
               className="h-full object-contain shadow-2.5xl drop-shadow-xl"
             />
           </div>
-
-          
         </section>
       </div>
-      
-<div className="relative min-h-screen overflow-hidden">
-  <motion.div
-    className="absolute top-0 left-0 w-full h-[100vh] z-0"
-    style={{
-      clipPath: "polygon(0% 35%, 100% 15%, 100% 80%, 0% 100%)",
-      backgroundImage:
-        "linear-gradient(-45deg,#00bcd4,rgb(236,128,255),#00c853,#ffd600,#1e90ff,#ff4081)",
-      backgroundSize: "600% 600%",
-    }}
-    animate={{
-      backgroundPosition: [
-        "0% 50%",
-        "50% 50%",
-        "100% 50%",
-        "50% 50%",
-        "0% 50%",
-      ],
-    }}
-    transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
-  />
+
+      <div className="relative min-h-screen overflow-hidden">
+        <motion.div
+          className="absolute top-0 left-0 w-full h-[100vh] z-0"
+          style={{
+            clipPath: "polygon(0% 35%, 100% 15%, 100% 80%, 0% 100%)",
+            backgroundImage:
+              "linear-gradient(-45deg,#00bcd4,rgb(236,128,255),#00c853,#ffd600,#1e90ff,#ff4081)",
+            backgroundSize: "600% 600%",
+          }}
+          animate={{
+            backgroundPosition: [
+              "0% 50%",
+              "50% 50%",
+              "100% 50%",
+              "50% 50%",
+              "0% 50%",
+            ],
+          }}
+          transition={{ duration: 30, repeat: Infinity, ease: "easeInOut" }}
+        />
         <HowItWorks />
       </div>
 
       <VideoShowcase />
-      
+
       <AnalyticalDashboard />
       <USPPage />
 
@@ -581,8 +670,13 @@ export default function StripeHero() {
           switchModal={switchAuthModal}
         />
       )}
-      
-      <ContactUs/>
+      <Link href="/smart-ads">
+        <button className="bg-green-500 text-white rounded-full px-6 py-3 text-sm font-semibold hover:bg-green-600 transition flex items-center gap-2">
+          Find Out What's Best For You
+        </button>
+      </Link>
+
+      <ContactUs />
       <Footer />
     </div>
   );
